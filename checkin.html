@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Check-in com Localização</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(sendLocation, showError, {
+            enableHighAccuracy: true
+          });
+        } else {
+          alert("Seu navegador não suporta geolocalização.");
+        }
+      }
+
+      function sendLocation(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        fetch("https://script.google.com/macros/s/AKfycbyOuGSe3XH3AuW4PS6Il8CKh1q0mVLSYEYn6i-fL1DqkTVcWkkUr4Sv1vT3sJTaaHB8Ww/exec", {
+          method: "POST",
+          body: JSON.stringify({
+            nome: document.getElementById("nome").value,
+            latitude: lat,
+            longitude: lng
+          }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            alert("Check-in feito com sucesso!");
+          } else {
+            alert("Erro ao enviar dados.");
+          }
+        })
+        .catch(error => {
+          alert("Erro ao conectar: " + error.message);
+        });
+      }
+
+      function showError(error) {
+        alert("Erro ao pegar localização: " + error.message);
+      }
+    </script>
+  </head>
+  <body>
+    <h2>Check-in</h2>
+    <label for="nome">Seu nome:</label><br>
+    <input type="text" id="nome" placeholder="Digite seu nome aqui"><br><br>
+    <button onclick="getLocation()">Fazer Check-in</button>
+  </body>
+</html>
